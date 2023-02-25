@@ -1,0 +1,255 @@
+\documentclass[9pt]{beamer}
+\mode<presentation>
+
+% Theme choice:
+\usetheme{Madrid}%Darmstadt
+
+\usecolortheme[RGB={0,100,50}]{structure}
+ \usefonttheme{structurebold}
+\setbeamercovered{invisible}
+%\setbeamertemplate{navigation symbols}{}
+\usepackage{dynblocks}
+\usepackage{textpos}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{tikz}
+\usetikzlibrary{positioning,calc}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage[affil-it]{authblk}
+\usepackage{etoolbox}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{lmodern}
+\usefonttheme{serif}
+\usepackage{listings}
+
+
+\makeatletter
+\patchcmd{\@maketitle}{\LARGE \@title}{\fontsize{18}{19.2}\selectfont\@title}{}{}
+\makeatother
+
+\renewcommand\Authfont{\fontsize{12}{14.4}\selectfont}
+\renewcommand\Affilfont{\fontsize{9}{10.8}\itshape}
+
+% Title page details:
+\title[Presentation]{Presentation} %add title
+
+
+
+
+\begin{document}
+
+\section{Recursive Formulation}
+
+\tikzstyle{box}=[rectangle, draw=black,
+           text centered, text=black, minimum width=1cm, minimum height=1cm]
+\tikzstyle{mbox}=[rectangle, draw=blue, thick, fill=blue!5,
+           text centered, text=black, minimum width=2cm, minimum height=1.25cm]
+\begin{frame}
+\centering
+\Huge \textbf{ How to find derangements? }
+\end{frame}
+
+\begin{frame} {Recursive Formulation}
+    \Large {\textbf{Base case ($n = 1$)}} \\
+    \vspace{1cm}
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}
+            \node[box, fill=blue!20] at (0,0) {$ a_1 $};
+            \pause
+            \node[mbox] at (0, -2) {$ !1 = 0$};
+        \end{tikzpicture}
+    \end{figure}
+\end{frame}
+
+
+\begin{frame} {Recursive Formulation}
+    \Large {\textbf{Base case ($n = 2$)}} \\
+    \vspace{1cm}
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}
+            \node[box, fill=blue!20] at (0,0) {$ a_1 $};
+            \node[box, fill=red!20] at (1.25,0) {$ a_2 $};
+            \pause
+            \node[box, fill=red!20] at (0,-2.5) {$ a_2 $};
+            \node[box, fill=blue!20] at (1.25,-2.5) {$ a_1 $};
+
+            \draw[->, thick] (0.62, -0.75) --++ (0, -1);
+            \pause
+            \node[mbox] at (5, -1.35) {$!2 = 1$};
+        \end{tikzpicture}
+    \end{figure}
+\end{frame}
+
+
+\begin{frame} {Recursive Formulation}
+    \begin{block}{Recursive Case}
+        For $n \ge 2$
+    \end{block}
+    \vspace{1cm}
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}
+            \draw[fill=blue!10] (0.5,-1) rectangle (8, 1);
+            \foreach \x in {1, 2, 3, 4}
+            {
+                \node[box, fill=green!10](a_\x) at (\x + \x * 0.25,0) {$ a_\x $};
+
+            }
+            \node at (6, 0) {...};
+            \node[box, fill=green!10] (a_n_1) at (7 ,0) {$ a_{n-1} $};
+            \node[box, fill=red!10] (a_n) at (9,0) {$ a_{n} $};
+            \pause
+            \draw[ ->] (a_n) edge [bend left] (a_1.south);
+            \draw[ ->] (a_n) edge [bend left] (a_2.south);
+            \draw[ ->] (a_n) edge [bend left] (a_3.south);
+            \draw[ ->] (a_n) edge [bend left] (a_4.south);
+            \draw[ ->] (a_n) edge [bend left] (a_n_1);
+
+        \end{tikzpicture}
+    \end{figure}
+\end{frame}
+
+\begin{frame} {Recursive Formulation}
+    \begin{block} {Case 1}
+        $a_1$ at $n$th position, $a_n$ at 1st position
+    \end{block}
+
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}
+            \uncover<4-> {\draw[fill=blue!10] (1.85,-1) rectangle (7.7, 1);}
+            \foreach \x in {2, 3, 4}
+            {
+                \node[box, fill=green!10](a_\x) at (\x + \x * 0.25,0) {$ a_\x $};
+
+            }
+            \node at (6, 0) {...};
+            \node[box, fill=green!10] (a_n_1) at (7,0) {$ a_{n-1} $};
+            \only<1>{
+                \node[box, fill=red!10] at (9,0) {$ a_{n} $};
+            }
+            \only<2->{
+                \node[box, fill=green!10] (a_n) at (9,0) {$ a_{1} $};
+            }
+            \uncover<2-3> {
+                \draw[ ->] (a_n) edge [bend left] (a_1.south);
+            }
+            \uncover<3> {
+                \draw[ ->] (a_1.north) edge [bend left] (a_n);
+            }
+            \only<1>{
+                \node[box, fill=green!10] at (1.25,0) {$ a_1 $};
+            }
+            \only<2->{
+                \node[box, fill=red!10] (a_1) at (1.25,0) {$ a_n $};
+            }
+            \uncover<5-> {
+                \node at (4.75, -1.5) {$!(n-2)$};
+            }
+        \end{tikzpicture}
+    \end{figure}
+\end{frame}
+
+\begin{frame} {Recursive Formulation}
+    \begin{block} {Case 2}
+        $a_1$ at $n$th position, $a_n$ at $i$th position ($i \neq 1 $)
+    \end{block}
+
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}
+            \uncover<3->{
+                \draw[fill=blue!10] (0.5,-1) rectangle (8, 1);
+            }
+            \foreach \x in { 2, 3, 4}
+            {
+                \node[box, fill=green!10](a_\x) at (\x + \x * 0.25,0) {$ a_\x $};
+
+            }
+            \node at (6, 0) {...};
+            \node[box, fill=green!10] (a_n_1) at (7,0) {$ a_{n-1} $};
+            \node[box, fill=green!10] (a_n) at (9,0) {$ a_{1} $};
+            \node[box, fill=red!10] (a_1) at (1.25,0) {$ a_n $};
+            \uncover<2> {
+                \draw[ ->] (a_1) edge [bend right] (a_2.south);
+                \draw[ ->] (a_1) edge [bend right] (a_3.south);
+                \draw[ ->] (a_1) edge [bend right] (a_4.south);
+                \draw[ ->] (a_1) edge [bend right] (a_n_1.south);
+            }
+            \uncover<4-> {
+                \node at (4, -1.5) {$!(n-1)$};
+            }
+        \end{tikzpicture}
+    \end{figure}
+\end{frame}
+
+\begin{frame} {Recursive Formulation}
+    \begin{block}{Recursive Formula}
+        \begin{align*}
+            !n = \uncover<2-> {
+                    \uncover<4> {
+                        (n - 1) (
+                    }
+                    !(n-2)
+                    \uncover<3-> {
+                       \quad + \quad !(n-1)
+                    }
+                \uncover<4-> {
+                    )
+                }
+            }
+        \end{align*}
+    \end{block}
+    \vspace{1cm}
+    \uncover<3-4>{
+        \begin{figure}
+        \centering
+        \begin{tikzpicture}
+            \draw[fill=blue!10] (0.5,-1) rectangle (8, 1);
+            \foreach \x in {1, 2, 3, 4}
+            {
+                \node[box, fill=green!10](a_\x) at (\x + \x * 0.25,0) {$ a_\x $};
+
+            }
+            \node at (6, 0) {...};
+            \node[box, fill=green!10] (a_n_1) at (7 ,0) {$ a_{n-1} $};
+            \node[box, fill=red!10] (a_n) at (9,0) {$ a_{n} $};
+            \pause
+            \draw[ ->] (a_n) edge [bend left] (a_1.south);
+            \draw[ ->] (a_n) edge [bend left] (a_2.south);
+            \draw[ ->] (a_n) edge [bend left] (a_3.south);
+            \draw[ ->] (a_n) edge [bend left] (a_4.south);
+            \draw[ ->] (a_n) edge [bend left] (a_n_1);
+
+        \end{tikzpicture}
+        \end{figure}
+    }
+
+\end{frame}
+
+\begin{frame}[fragile]{Recursive Function}
+\begin{block}{C++ function}
+\begin{lstlisting}[language=C++]
+    int derangement(int n) {
+        if(n == 1) return 0;
+        if(n == 2) return 1;
+        return (n - 1) * (derangement(n - 1)
+                        + derangement(n - 2));
+    }
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+
+
+
+\end{document}
